@@ -1,2 +1,2 @@
 # Snickerstream
-Soon :)
+Soon™ :)
