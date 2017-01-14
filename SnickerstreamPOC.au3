@@ -33,8 +33,8 @@ $aWinResize, $yBMP1=0, $yBMP2=240, $iLayoutmode=0
 Global $sIpAddr="0.0.0.0", $iPriorityMode=0, $iPriorityFactor=5, $iImageQuality=90, $iQoS=20
 
 ;Globals - Config
-Global $sFname="settings.ini", $sSectionName="Snickerstream", $aIniSections[7] = ["IpAddr", "PriorityMode", "PriorityFactor", "ImageQuality", _
-"QoS", "Interpolation", "Layoutmode"]
+Global $sFname="settings.ini", $sSectionName="Snickerstream", $aIniSections[8] = ["IpAddr", "PriorityMode", "PriorityFactor", "ImageQuality", _
+"QoS", "Interpolation", "Layoutmode", "PCIpAddr"], $sPCIpAddr=@IPAddress1
 
 ;Globals - Misc
 Global $iExtraPriority=0, $hTimer=TimerInit(), $bStreaming=False
@@ -42,14 +42,15 @@ Global $iExtraPriority=0, $hTimer=TimerInit(), $bStreaming=False
 AutoItSetOption("GUIOnEventMode", 1)	;Use OnEvent mode - a script like this would be awful without it
 AutoItSetOption("TCPTimeout",5000)
 
-UDPStartup()	;Start up the UDP protocol
-Const $iSocket = UDPBind(@IPAddress1, "8001")	;Listen to port 8001
 CreateMainGUIandSettings() ;Create the GUI
 Do
 	Sleep(100)
 Until $bStreaming=True
 
 Func StreamingLoop()
+	UDPStartup()	;Start up the UDP protocol
+	Global Const $iSocket = UDPBind($sPCIpAddr, "8001")	;Listen to port 8001
+
     _GDIPlus_Startup() ;initialize GDI+
     Local Const $iBgColor = 0x303030 ;$iBGColor format RRGGBB
 
@@ -171,6 +172,7 @@ Func CreateMainGUIandSettings()
 		$iQoS=IniRead($sFname,$sSectionName,$aIniSections[4],$iQoS)
 		$iInterpolation=IniRead($sFname,$sSectionName,$aIniSections[5],$iInterpolation)
 		$iLayoutMode=IniRead($sFname,$sSectionName,$aIniSections[6],$iLayoutMode)
+		$sPCIpAddr=IniRead($sFname,$sSectionName,$aIniSections[7],@IPAddress1)
 	Else
 		WriteConfig()
 		;If we use WriteConfig for the first time, the written priority mode value will be wrong. We'll (over)write the right one with
@@ -247,6 +249,7 @@ Func WriteConfig()
 	IniWrite($sFname,$sSectionName,$aIniSections[4],$iQoS)
 	IniWrite($sFname,$sSectionName,$aIniSections[5],$iInterpolation)
 	IniWrite($sFname,$sSectionName,$aIniSections[6],$iLayoutMode)
+	IniWrite($sFname,$sSectionName,$aIniSections[7],$sPCIpAddr)
 EndFunc
 
 Func SendPacket()
@@ -254,8 +257,9 @@ Func SendPacket()
 	$iRet = _NTRInitRemoteplay($sIpAddr, $iPriorityMode, $iPriorityFactor, $iImageQuality, $iQoS)
 	If $iRet = -1 Then
 		MsgBox($MB_ICONERROR, "Connection error", "Could not connect to the (N)3DS.")
+	Else
+		MsgBox($MB_ICONINFORMATION,"Success!","Remoteplay successfully started!")
 	EndIf
-	MsgBox($MB_ICONINFORMATION,"Success!","Remoteplay successfully started!")
 EndFunc
 
 Func StartStream()
@@ -267,6 +271,7 @@ Func StartStream()
 EndFunc
 
 Func AboutMsg()
+	ConsoleWrite($sPCIpAddr)
 	MsgBox($MB_ICONINFORMATION,"About Snickerstream",$sGUITitle&"by RattletraPM"&@CRLF&@CRLF&"This software and its source code are provided free of charge under the GPL-3.0 License. See License.txt for the full license.")
 EndFunc
 
