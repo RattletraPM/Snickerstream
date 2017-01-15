@@ -57,13 +57,13 @@ Func StreamingLoop()
 	Switch $iLayoutmode
 		Case 0
 			Global $iWidth = 400, $iHeight = 480	;Vertical view mode
-			Local $iGUIWidthHeight=Default, $xGUIStyle=$WM_NCLBUTTONDOWN
+			Local $iGUIWidthHeight=Default, $xGUIStyle=Default
 		Case 1
 			Global $iWidth = 400, $iHeight = 480	;TODO: Horizontal view mode
-			Local $iGUIWidthHeight=Default, $xGUIStyle=$WM_NCLBUTTONDOWN
+			Local $iGUIWidthHeight=Default, $xGUIStyle=Default
 		Case 2
 			Global $iWidth = 400, $iHeight = 480	;TODO: Top screen only view mode
-			Local $iGUIWidthHeight=Default, $xGUIStyle=$WM_NCLBUTTONDOWN
+			Local $iGUIWidthHeight=Default, $xGUIStyle=Default
 	EndSwitch
 
 	$g_hGUI = GUICreate($sGUITitle, $iWidth, $iHeight,$iGUIWidthHeight,$iGUIWidthHeight,$xGUIStyle) ;Create the GUI
