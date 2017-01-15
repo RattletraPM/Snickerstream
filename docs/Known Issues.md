@@ -18,7 +18,7 @@ could prove annoying when closing Snickerstream while there's a connection error
 In that case, close Snickerstream from the tray icon.
 
 
--Not really an issue, being more like lazy coding. Still. You can scale the window
+- Not really an issue, being more like lazy coding. Still. You can scale the window
 to a ridiculosly big or small size (window size checks aren't implemented yet). 
 Also, the scaling factor is exponential and not linear (1x, 2x, 4x, 8x, 16x, etc.
 instead of 1x, 2x, 3x, 4x, etc.)
