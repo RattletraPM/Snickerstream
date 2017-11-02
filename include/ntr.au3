@@ -3,9 +3,7 @@
 ; #INDEX# =======================================================================================================================
 ; Title .........: 	NTR UDF for AutoIT v3 (UDF Version 0.7b)
 ; AutoIt Version : 	3.3.14.2
-; Description ...: 	Provides some functions that can be used to send/receive data from a (New) 3DS running NTR CFW. The functions
-;					contained in this UDF are intended to be used with Snickerstream, but they can be used freely in any other
-;					project as long as it's not in violation of the GPLv2 License.
+; Description ...: 	This UDF has been discontinued. Read more: https://github.com/RattletraPM/Snickerstream/tree/master/include
 ;
 ;					Snickerstream and all of its components are released under the GPLv2 License:
 ;					https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
@@ -68,15 +66,22 @@ Func _NTRInitRemoteplay($sIp, $bPriorityMode = 1, $iPriorityFactor = 5, $iQualit
 	TCPStartup()
 	Local $iSocket = TCPConnect($sIp, $sPort)	;Connect to the (N)3DS with the given IP
 	If @error Then
+		LogLine("TCPConnect error, @error="&@error&".",3)
 		Return -1
     Else
 		TCPSend($iSocket, $dBinaryPacket)		;Send the package
-		If @error Then Return -1
+		If @error Then
+			LogLine("TCPSend error, @error="&@error&".",3)
+			Return -1
+		EndIf
 	EndIf
 	TCPCloseSocket($iSocket)					;NTR expect us to disconnect
 	Sleep(3000)									;Give NTR enough time to start remoteplay
 	$iSocket = TCPConnect($sIp, $sPort)			;NTR expects us to reconnect before it starts streaming frames
-	If @error Then Return -1
+	If @error Then
+		LogLine("TCPConnect error, @error="&@error&".",3)
+		Return -1
+	EndIf
 	TCPCloseSocket($iSocket)					;We'll disconnect right after reconnecting to save bandwidth
 	TCPShutdown()
 	Return 1
@@ -102,16 +107,21 @@ EndFunc
 ; Link ..........:
 ; Example .......: 	See Snickerstream's source code
 ; ===============================================================================================================================
-Func _NTRRemoteplayReadJPEG($iSocket,$iScreen)
-	Local $sFullJPEGBuf, $dRecv, $iCurId, $iCurScreen, $iExpectedPacket=0, $dReturn
+Func _NTRRemoteplayReadJPEG($iSocket)
+	Local $sFullJPEGBuf, $dRecv, $iCurId, $iCurScreen, $iExpectedPacket=0
 
+	Local $aRetArr[2]
 	$dRecv=UDPRecv($iSocket,2000,1)
 	If @error Then
+		LogLine("UDPRecv error, @error="&@error&".",3)
         Return -1
     Else
 		$aHeader=_NTRRemoteplayReadPacketHeader(BinaryMid($dRecv,1,4))	;First, we need to read the packet's header
 		;We return an error if the previous function failed, if the packet number is NOT zero, or if the packet's screen ID is different than $iScreen
-		If IsArray($aHeader)==0 Or $aHeader[2]<>0 Or $aHeader[1]<>$iScreen Then Return -1
+		If IsArray($aHeader)==0 Or $aHeader[2]<>0 Then
+			LogLine("Invalid or incomplete packet recieved, skipping. This is OK if you've just started Snickerstream.",3)
+			Return -1
+		EndIf
 		$iCurId=$aHeader[0]
 		$iCurScreen=$aHeader[1]
 		Do	;Now we try to read and assemble the entire JPEG image! (As you might've guessed, it's split in multiple packets)
@@ -124,15 +134,22 @@ Func _NTRRemoteplayReadJPEG($iSocket,$iScreen)
 			;If $aHeader has returned an error, the packet's screen byte has changed or there is a mismatch between the expected
 			;packet number and the actual packet number, it means that we've dropped some packets and we cannot assemble a valid
 			;image. Return an error.
-			If IsArray($aHeader)==0 Or $iExpectedPacket<>$aHeader[2] Or $iCurScreen<>StringRight(Hex($aHeader[1],2),1) Then Return -1
+			If IsArray($aHeader)==0 Or $iExpectedPacket<>$aHeader[2] Or $iCurScreen<>StringRight(Hex($aHeader[1],2),1) Then
+				LogLine("Some packets have been dropped! Skipping current frame. (Check your connection!)",3)
+				Return -1
+			EndIf
 		Until $aHeader[0]<>$iCurId
 	EndIf
 
-	If StringRight($sFullJPEGBuf,4)<>"FFD9" Then Return -1	;If the JPEG doesn't end with the HEX bytes FFD9 it means that's incomplete
+	If StringRight($sFullJPEGBuf,4)<>"FFD9" Then ;If the JPEG doesn't end with the HEX bytes FFD9 it means that's incomplete
+		LogLine("Current frame is not a valid JPEG image, skipping. (You might be dropping packets, check your connection!)",3)
+		Return -1
+	EndIf
 
-	$dReturn=Binary("0x"&$sFullJPEGBuf)
+	$aRetArr[0]=StringRight(Hex($aHeader[1],2),1)
+	$aRetArr[1]=Binary("0x"&$sFullJPEGBuf)
 
-	Return $dReturn	;...And now we convert the newly assembled image back to binary. Success!
+	Return $aRetArr	;...And now we convert the newly assembled image back to binary. Success!
 EndFunc
 
 ; #FUNCTION# ====================================================================================================================
@@ -182,6 +199,8 @@ Func _NTRRemoteplayReadPacketHeader($dPacket)
 	For $i=0 To 2
 		$aRet[$i] = Int(BinaryMid($dPacket,2^$i,1))
 	Next
+
+	LogLine("Packet recieved: frameID:"&$aRet[0]&",isTop:"&$aRet[1]&",packetNum:"&$aRet[2],3)
 
 	Return $aRet
 EndFunc
