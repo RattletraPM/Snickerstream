@@ -38,7 +38,7 @@
 				<property name="Height" vt="Int8">73</property>
 				<property name="CtrlStyle" vt="Int32">1342308359</property>
 				<property name="CtrlExStyle" vt="Int8">0</property>
-				<property name="Caption" vt="String">Adv. settings</property>
+				<property name="Caption" vt="String">Display settings</property>
 				<property name="TabOrder" vt="Int8">17</property>
 				<property name="Resizing" vt="Set"/>
 			</properties>
@@ -52,7 +52,7 @@
 				<property name="Height" vt="Int16">145</property>
 				<property name="CtrlStyle" vt="Int32">1342308359</property>
 				<property name="CtrlExStyle" vt="Int8">0</property>
-				<property name="Caption" vt="String">Basic settings</property>
+				<property name="Caption" vt="String">Remoteplay settings</property>
 				<property name="TabOrder" vt="Int8">16</property>
 				<property name="Resizing" vt="Set"/>
 			</properties>
