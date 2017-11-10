@@ -27,8 +27,8 @@
 - A: Some antiviruses see EVERYTHING made with AutoIt as viruses, and usually crappy ones do that. You can see that it does nothing wrong to your system by looking at the source code posted here. Either add Snickerstream to the exclusions list or (recommended) change your antivirus because it's probably garbage, really.
 
 
-- Q: Can I stream screens outside my LAN? / Should I open the ports used by Snickerstream on your router?
-- A: It's a technically supported feature but I strongly recommend you to NOT do either of these things. Unless you change the PcIpAddr value in the INI to an internal one used by one of your computer's network adapters (which kinda defeats the point of the first question) your stream will be accessible to everyone that knows your IP address, which you might think isn't bad until you realize that NTR sends its frames as RAW JPEG data: a malicious user could send invalid or modified packets and interfere with it!
+- Q: Can I stream screens outside my (W)LAN? / Should I open the ports used by Snickerstream on your router?
+- A: It's a technically supported feature but I strongly recommend you to NOT do either of these things. Unless you change the PcIpAddr value in the INI to an internal one used by one of your computer's network adapters (which kinda defeats the point of the first question) your stream will be accessible to everyone that knows your external IP address, which you might think isn't bad until you realize that NTR sends its frames as RAW JPEG data: a malicious user could send invalid or modified packets and interfere with it! As long as you stream inside your (W)LAN (aka, if you use internal IP addresses) you DO NOT have to port forward.
 
 
 - Q: I've found a bug! What do I do?
