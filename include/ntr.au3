@@ -30,7 +30,7 @@
 ; Return values .: 	Success     		- 1
 ;                  	Failure     		- Returns -1
 ; Author ........: 	RattletraPM
-; Modified.......:	13/01/2017
+; Modified.......:	10/11/2017
 ; Remarks .......: 	You MUSTN'T specify the connection port, as NTR always expects a connection on port 8000.
 ;					It's highly recommended to set TCPTimeout to a value higher than default (Snickerstream uses 5000).
 ; Related .......: 	_NTRSendNFCPatch, TCPTimeout (Option)
@@ -43,7 +43,7 @@ Func _NTRInitRemoteplay($sIp, $bPriorityMode = 1, $iPriorityFactor = 5, $iQualit
 		Return -1
 	EndIf
 
-	;If this value is higher than 100 then NTR simpli disables the QoS feature, so we just set it to an arbitrary value higher
+	;If this value is higher than 100 then NTR simply disables the QoS feature, so we just set it to an arbitrary value higher
 	;than 100.
 	If $iQosValue>100 Then $iQosValue=105
 
@@ -69,7 +69,7 @@ Func _NTRInitRemoteplay($sIp, $bPriorityMode = 1, $iPriorityFactor = 5, $iQualit
 		LogLine("TCPConnect error, @error="&@error&".",3)
 		Return -1
     Else
-		TCPSend($iSocket, $dBinaryPacket)		;Send the package
+		TCPSend($iSocket, $dBinaryPacket)		;Send the packet
 		If @error Then
 			LogLine("TCPSend error, @error="&@error&".",3)
 			Return -1
@@ -79,7 +79,7 @@ Func _NTRInitRemoteplay($sIp, $bPriorityMode = 1, $iPriorityFactor = 5, $iQualit
 	Sleep(3000)									;Give NTR enough time to start remoteplay
 	$iSocket = TCPConnect($sIp, $sPort)			;NTR expects us to reconnect before it starts streaming frames
 	If @error Then
-		LogLine("TCPConnect error, @error="&@error&".",3)
+		LogLine("TCPConnect error while reconnecting, @error="&@error&".",3)
 		Return -1
 	EndIf
 	TCPCloseSocket($iSocket)					;We'll disconnect right after reconnecting to save bandwidth
@@ -97,7 +97,7 @@ EndFunc
 ;                  	Failure     		- 	Returns -1, sets @error to non-zero if an UDP error occurred
 ;					@error				- 	Windows API WSAStartup return value (see MSDN).
 ; Author ........: 	RattletraPM
-; Modified.......:	29/12/2016
+; Modified.......:	10/11/2017
 ; Remarks .......: 	This function doesn't handle any UDP-related functions (except for UDPRecv, of course) to optimize performace.
 ;					This means that you have to call UDPStartup(), UDPShutdown() and, obivously, UDPBind() by yourself!
 ;					When calling UDPBind(), remember that the IP address to bind is probably @IPAddress1 and that NTR always
@@ -119,7 +119,7 @@ Func _NTRRemoteplayReadJPEG($iSocket)
 		$aHeader=_NTRRemoteplayReadPacketHeader(BinaryMid($dRecv,1,4))	;First, we need to read the packet's header
 		;We return an error if the previous function failed, if the packet number is NOT zero, or if the packet's screen ID is different than $iScreen
 		If IsArray($aHeader)==0 Or $aHeader[2]<>0 Then
-			LogLine("Invalid or incomplete packet recieved, skipping. This is OK if you've just started Snickerstream.",3)
+			LogLine("Invalid or incomplete packet recieved, skipping. This is OK if you've just started Snickerstream.",2)
 			Return -1
 		EndIf
 		$iCurId=$aHeader[0]
@@ -135,14 +135,14 @@ Func _NTRRemoteplayReadJPEG($iSocket)
 			;packet number and the actual packet number, it means that we've dropped some packets and we cannot assemble a valid
 			;image. Return an error.
 			If IsArray($aHeader)==0 Or $iExpectedPacket<>$aHeader[2] Or $iCurScreen<>StringRight(Hex($aHeader[1],2),1) Then
-				LogLine("Some packets have been dropped! Skipping current frame. (Check your connection!)",3)
+				LogLine("Some packets have been dropped! Skipping current frame. (Check your connection!)",2)
 				Return -1
 			EndIf
 		Until $aHeader[0]<>$iCurId
 	EndIf
 
 	If StringRight($sFullJPEGBuf,4)<>"FFD9" Then ;If the JPEG doesn't end with the HEX bytes FFD9 it means that's incomplete
-		LogLine("Current frame is not a valid JPEG image, skipping. (You might be dropping packets, check your connection!)",3)
+		LogLine("Current frame is not a valid JPEG image, skipping. (You might be dropping packets, check your connection!)",2)
 		Return -1
 	EndIf
 
@@ -162,7 +162,7 @@ EndFunc
 ;					@error				- 1 $dPacket is not a binary type variable
 ;										- 2 Invalid packet ($dPacket contains less than 4 bytes)
 ; Author ........: 	RattletraPM
-; Modified.......:	27/12/2016
+; Modified.......:	10/11/2017
 ; Remarks .......: 	$dPacket can either be an entire packet or the first four bytes (aka the header) of a packet.
 ; Related .......: 	_NTRRemoteplayReadJPEG
 ; Link ..........:
@@ -203,4 +203,36 @@ Func _NTRRemoteplayReadPacketHeader($dPacket)
 	LogLine("Packet recieved: frameID:"&$aRet[0]&",isTop:"&$aRet[1]&",packetNum:"&$aRet[2],3)
 
 	Return $aRet
+EndFunc
+
+; #FUNCTION# ====================================================================================================================
+; Name...........: 	_NTRSendNFCPatch
+; Author ........: 	RattletraPM
+; ===============================================================================================================================
+Func _NTRSendNFCPatch($sIp,$sAddr)
+
+	Local Const $dBinaryPacket1 = Binary("0x78563412c05d0000010000000a0000001a000000"&$sAddr&"00020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000")
+	Local Const $dBinaryPacket2 = Binary("0x7047")
+	Local Const $sPort = 8000
+
+	TCPStartup()
+	Local $iSocket = TCPConnect($sIp, $sPort)	;Connect to the (N)3DS with the given IP
+	If @error Then
+		LogLine("TCPConnect error, @error="&@error&".",3)
+		Return -1
+    Else
+		TCPSend($iSocket, $dBinaryPacket1)		;Send the package
+		If @error Then
+			LogLine("TCPSend error, @error="&@error&".",3)
+			Return -1
+		EndIf
+		TCPSend($iSocket, $dBinaryPacket2)		;Send the package
+		If @error Then
+			LogLine("TCPSend error, @error="&@error&".",3)
+			Return -1
+		EndIf
+	EndIf
+	TCPCloseSocket($iSocket)					;NTR expect us to disconnect
+	TCPShutdown()
+	Return 1
 EndFunc
