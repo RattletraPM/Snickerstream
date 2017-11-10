@@ -50,8 +50,6 @@ Keep in mind that some games (such as Pokémon XY/ORAS/SUMO) require a NFC patch
 
 * If you get poor streaming performance try lowering the streaming quality or increasing the QoS value.
 
-* If you get poor performance while using fullscreen mode then lower your desktop resolution. Please note that fullscreen is currently an experimental feature and might not work well on old computers.
-
 * If your antivirus detects it as a virus, be calm, it's a false positive. There's a reason I made this tool open source and you can check by yourself that it isn't doing anything nasty on your system (also, some crappy AVs see anything made with AutoIt as malicious. If yours is doing that, then change your own to something that isn't Protegent-level, pretty please =/ )
 
 ## Keyboard shortcuts
