@@ -19,8 +19,12 @@
 - A: No. Snickerstream has been built with a "by streamers, for streamers" philosophy which means anything that isn't related to streaming or that cannot improve it in any way will be considered extra bloat and isn't going to be implemented. Besides, there are already many better ways to upload files (FTP or Nintendo's own SMB) or install CIAs (FBI, both locally, via URL or even via QR), so they are completely unneeded.
 
 
-- Q: What about remoteplay?
-- A: I'm unsure as of now. You CAN already use any type of remoteplay programs togheter with Snickerstream (I suggest you go with Luma's integrated feature, it doesn't require you to install anything else and has many different clients that support it) but, on the other hand, could be handy. Right now the main focus is to give you the best streaming performance ever with the most features, but I guess I might think about it in later versions.
+- Q: What about input redirection?
+- A: I'm unsure as of now. You CAN already use any type of input redirection programs togheter with Snickerstream (I suggest you go with Luma's integrated feature, it doesn't require you to install anything else and has many different clients that support it) but, on the other hand, could be handy. Right now the main focus is to give you the best streaming performance ever with the most features, but I guess I might think about it in later versions.
+
+
+- Q: My antivirus sees Snickerstream as a virus!
+- A: Some antiviruses see EVERYTHING made with AutoIt as viruses, and usually crappy ones do that. You can see that it does nothing wrong to your system by looking at the source code posted here. Either add Snickerstream to the exclusions list or (recommended) change your antivirus because it's probably garbage, really.
 
 
 - Q: I've found a bug! What do I do?
