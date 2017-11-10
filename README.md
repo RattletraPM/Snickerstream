@@ -44,10 +44,10 @@ And here are some of the planned features:
 This quick tutorial on how to use Snickerstream 0.6b PoC gives for granted that
 you have installed NTR CFW on your New 3DS and you know how to get it up and running.
 
-. Open NTR CFW. I strongly suggest you to use BootNTR, but anything that works for
+- Open NTR CFW. I strongly suggest you to use BootNTR, but anything that works for
 you is going to be fine too.
 
-. Make sure that you're connected to your Wi-Fi network and find your 3DS's local IP
+- Make sure that you're connected to your Wi-Fi network and find your 3DS's local IP
 address. There are a few ways to do this, for example:
 
 - Open FTPD and look at the top screen (you don't need the port, aka the number after
@@ -55,9 +55,9 @@ the ":")
 - Use FBI (go to Remote Install -> Recieve URLs over the network)
 - Set a static IP address
 
-. Insert your IP address and click on "Start remoteplay". 
+- Insert your IP address and click on "Start remoteplay". 
 
-. Click on connect!
+- Click on connect!
 
 Keep in mind that some games (such as Pokémon XY/ORAS/SUMO) require a NFC patch to be
 streamed via NTR. You can apply this patch by downloading one for your game then
