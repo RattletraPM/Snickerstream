@@ -8,7 +8,7 @@
  
  
 - Q: But then, can I run it using Wine?
-- A: Yes! Even if I cannot ensure 100% compatibility for obivous reasons, Snickerstream should be as Wine-friendly as it gets. Wine added Direct2D support since version 1.8 and GDI+ has been supported for a long while now.
+- A: Yes! Even if I cannot ensure 100% compatibility for obivous reasons, Snickerstream should be as Wine-friendly as it gets. Wine added Direct2D support since version 1.8 and GDI+ has been supported for a long while now. EDIT: Apparently Wine 2.0.3/2.21 returns an undeclared variable error due to the D2D/WIC UDFs requiring a function that's currently stubbed. As this is an error caused by Wine itself (you can double check that by running a syntax error check in SciTE on any Au3 file in this repo and it'll always say that there are no errors or warnings) there's not much I can do, but you could have better luck if you try different Wine versions.
 
 
 - Q: I've got issues with Virtual Console titles!
