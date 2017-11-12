@@ -67,7 +67,7 @@ ENTER: Go back to the connection window
 ## How to compile
 You need AutoIt v3.3.14.2 or later to compile Snickerstream.
 
-After you've downloaded and installed AutoIt, clone this repo to your hard drive and use Aut2Exe to compile SnickerstreamPOC.au3 to an EXE file or open it in SciTE to run the script without compiling.
+After you've downloaded and installed AutoIt, clone this repo to your hard drive and use Aut2Exe to compile Snickerstream.au3 to an EXE file or open it in SciTE to run the script without compiling.
 
 ## F.A.Q.
 You can see the F.A.Q. here: https://github.com/RattletraPM/Snickerstream/blob/master/FAQ.md
