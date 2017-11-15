@@ -29,7 +29,7 @@ And here are some of the planned features:
 
 ## Quick tutorial
 
-This quick tutorial on how to use Snickerstream 0.6b PoC gives for granted that you have installed NTR CFW on your New 3DS and you know how to get it up and running.
+This quick tutorial on how to use Snickerstream 0.85b gives for granted that you have installed NTR CFW on your New 3DS and you know how to get it up and running.
 
 - Open NTR CFW. I strongly suggest you to use BootNTR, but anything that works for you is going to be fine too.
 
