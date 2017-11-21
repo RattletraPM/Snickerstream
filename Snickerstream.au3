@@ -26,9 +26,10 @@ TODO: Add features and other stuff. Code has been polished a bit, but it could b
 #include "include\ntr.au3"
 #include "include\WIC.au3"
 #include "include\Direct2D.au3"
+#include "include\GetGitCommit.au3"
 
 ;Globbals - Streaming GUI and Drawing
-Global $g_hGUI, $g_hGfxCtxt, $g_hBitmap, $g_hBMP, $g_hBMP2, $g_hGraphics, $iFPS=0, $iInterpolation=0, $sVersion="v0.85b ", _
+Global $g_hGUI, $g_hGfxCtxt, $g_hBitmap, $g_hBMP, $g_hBMP2, $g_hGraphics, $iFPS=0, $iInterpolation=0, $sVersion="git_"&_GetGitCommit("refs/remotes/origin/master")&" ", _
 $sGUITitle="Snickerstream " & $sVersion, $aWinResize, $ix1BMP1=0, $ix2BMP1=0, $ix1BMP2=0, $ix2BMP2=0, $iy1BMP1=0, $iy2BMP1=0, $iy1BMP2=0, $iy2BMP2=0, _
 $iLayoutmode=0, $bNoDisplayIPWarn=0, $bD2D=True
 
@@ -36,8 +37,8 @@ $iLayoutmode=0, $bNoDisplayIPWarn=0, $bD2D=True
 Global $sIpAddr="0.0.0.0", $iPriorityMode=0, $iPriorityFactor=5, $iImageQuality=70, $iQoS=20
 
 ;Globals - Config
-Global $sFname="settings.ini", $sSectionName="Snickerstream", $aIniSections[15] = ["IpAddr", "PriorityMode", "PriorityFactor", "ImageQuality", _
-"QoS", "Interpolation", "Layoutmode", "PCIpAddr", "NoDisplayIPWarn", "Loglevel", "DontCheckSettings", "UseD2D", "GDIPWarn", "NFCLastAnswer", "WaitRemoteplayInit"], _
+Global $sFname="settings.ini", $sSectionName="Snickerstream", $aIniSections[16] = ["IpAddr", "PriorityMode", "PriorityFactor", "ImageQuality", _
+"QoS", "Interpolation", "Layoutmode", "PCIpAddr", "NoDisplayIPWarn", "Loglevel", "DontCheckSettings", "UseD2D", "GDIPWarn", "NFCLastAnswer", "WaitRemoteplayInit", "Framelock"], _
 $sPCIpAddr=$sIpAddr, $iLogLevel=0, $sLogFname="log.txt"
 
 ;Globals - Misc
@@ -124,7 +125,7 @@ Func StreamingLoop()
 			CheckOptimal()
 	EndSwitch
 
-	$g_hGUI = GUICreate($sGUITitle, $iWidth, $iHeight,$iGUIWidthHeight,$iGUIWidthHeight,$xGUIStyle,$xGUIExStyle) ;Create the GUI
+	$g_hGUI = GUICreate($sSectionName&" - Connecting...", $iWidth, $iHeight,$iGUIWidthHeight,$iGUIWidthHeight,$xGUIStyle,$xGUIExStyle) ;Create the GUI
 	GUISetBkColor(0, $g_hGUI)
 
 	;In order to correctly resize the window, we need to get the difference between the graphics object width/height and the actual
@@ -152,8 +153,11 @@ Func StreamingLoop()
 	EndIf
 	CheckIfStreaming($iSocket,$sIpAddr)
 
+	Local $iFramelock=IniRead($sFname,$sSectionName,$aIniSections[15],0)
+
     While $bStreaming==True
 		If WinActive($g_hGUI)==$g_hGUI Then CheckKeys()	;Check the keys that are pressed to do various functions
+		Local $iFrameTimer=TimerInit()
 		$aJpeg=_NTRRemoteplayReadJPEG($iSocket)
 		If IsArray($aJpeg) Then
 			$iFPS+=1
@@ -174,10 +178,12 @@ Func StreamingLoop()
 				_GDIPlus_GraphicsDrawImageRect($g_hGraphics, $g_hBitmap, 0, 0, $iWidth, $iHeight) ;Copy drawn bitmap to graphics handle (GUI)
 				_GDIPlus_GraphicsSetInterpolationMode($g_hGraphics,$iInterpolation)	;We need to set the interpolation mode each frame in case the mode gets changed
 			EndIf
+			;Sleep a number of seconds depending on the set framelock and time spent while rendering the frame (won't sleep if time is <0ms)
+			If $iFramelock>0 Then Sleep((900/$iFramelock)-TimerDiff($iFrameTimer))	;900ms instead of 1000ms in order to compensate AutoIt's Sleep imprecisions - check the function ref
 		EndIf
 		If TimerDiff($hTimer)>=1000 Then
 			$hTimer=TimerInit()
-			WinSetTitle($g_hGUI,"",$sGUITitle&$iFPS&" FPS")
+			WinSetTitle($g_hGUI,"",$sSectionName&" - "&$iFPS&" FPS")
 			LogLine("FPS:"&$iFPS,3)
 			$iFPS=0
 		EndIf
@@ -619,6 +625,7 @@ Func CheckIfStreaming($iUDPSocket,$sRemoteIP)
 	While $bRecieved==False
 		$dRecv=UDPRecv($iUDPSocket,2000,1)
 		If TimerDiff($hTimerTimeout)>=IniRead($sFname,$sSectionName,$aIniSections[14],1000) And $bChecked==False Then
+			WinSetTitle($g_hGUI,"",$sSectionName&" - Starting remoteplay...")
 			LogLine("Starting remoteplay on 3DS.",1)
 			$iRet = _NTRInitRemoteplay($sRemoteIP, $iPriorityMode, $iPriorityFactor, $iImageQuality, $iQoS)
 			If $iRet = -1 Then
