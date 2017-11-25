@@ -154,10 +154,11 @@ Func StreamingLoop()
 	CheckIfStreaming($iSocket,$sIpAddr)
 
 	Local $iFramelock=IniRead($sFname,$sSectionName,$aIniSections[15],0)
+	Local $iFramelockedFPS=0
 
     While $bStreaming==True
-		If WinActive($g_hGUI)==$g_hGUI Then CheckKeys()	;Check the keys that are pressed to do various functions
 		Local $iFrameTimer=TimerInit()
+		If WinActive($g_hGUI)==$g_hGUI Then CheckKeys()	;Check the keys that are pressed to do various functions
 		$aJpeg=_NTRRemoteplayReadJPEG($iSocket)
 		If IsArray($aJpeg) Then
 			$iFPS+=1
@@ -178,12 +179,21 @@ Func StreamingLoop()
 				_GDIPlus_GraphicsDrawImageRect($g_hGraphics, $g_hBitmap, 0, 0, $iWidth, $iHeight) ;Copy drawn bitmap to graphics handle (GUI)
 				_GDIPlus_GraphicsSetInterpolationMode($g_hGraphics,$iInterpolation)	;We need to set the interpolation mode each frame in case the mode gets changed
 			EndIf
-			;Sleep a number of seconds depending on the set framelock and time spent while rendering the frame (won't sleep if time is <0ms)
-			If $iFramelock>0 Then Sleep((900/$iFramelock)-TimerDiff($iFrameTimer))	;900ms instead of 1000ms in order to compensate AutoIt's Sleep imprecisions - check the function ref
+			Local $iRemainingTime=TimerDiff($iFrameTimer)+((1000/$iFramelock)-TimerDiff($iFrameTimer))
+			If $iFramelock>0 And $aJpeg[0]==$iPriorityMode Then
+				$iFramelockedFPS+=1
+				While TimerDiff($iFrameTimer)<=$iRemainingTime	;Nothing (it doesn't use the Sleep function because it's limited to a minimum of 10ms, read the function ref)
+				WEnd
+			EndIf
 		EndIf
 		If TimerDiff($hTimer)>=1000 Then
 			$hTimer=TimerInit()
-			WinSetTitle($g_hGUI,"",$sSectionName&" - "&$iFPS&" FPS")
+			If $iFramelock=0 Then
+				WinSetTitle($g_hGUI,"",$sSectionName&" - "&$iFPS&" FPS")
+			Else
+				WinSetTitle($g_hGUI,"",$sSectionName&" - "&$iFPS&" FPS, screen"&$iPriorityMode&" "&$iFramelockedFPS&" FPS")
+				$iFramelockedFPS=0
+			EndIf
 			LogLine("FPS:"&$iFPS,3)
 			$iFPS=0
 		EndIf
@@ -299,7 +309,7 @@ Func CheckKeys()
 		CreateMainGUIandSettings()
 	EndIf
 	If _CheckPressedOnce("53")==True Then
-		_ScreenCapture_CaptureWnd("screenshot"&@MDAY&@MON&@YEAR&@HOUR&@MIN&@SEC&@MSEC&".bmp",$g_hGUI)
+		_ScreenCapture_CaptureWnd("screenshot"&@MDAY&@MON&@YEAR&@HOUR&@MIN&@SEC&@MSEC&".bmp",$g_hGUI,Default,Default,Default,Default,False)
 	EndIf
 	If _IsPressed("1B") Then ExitStreaming()
 EndFunc
