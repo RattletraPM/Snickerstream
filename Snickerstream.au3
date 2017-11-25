@@ -309,7 +309,7 @@ Func CheckKeys()
 		CreateMainGUIandSettings()
 	EndIf
 	If _CheckPressedOnce("53")==True Then
-		_ScreenCapture_CaptureWnd("screenshot"&@MDAY&@MON&@YEAR&@HOUR&@MIN&@SEC&@MSEC&".bmp",$g_hGUI,Default,Default,Default,Default,False)
+		_ScreenCapture_CaptureWnd("screenshot"&@MDAY&@MON&@YEAR&@HOUR&@MIN&@SEC&@MSEC&".bmp",$g_hGUI,0,0,-1,-1,False)
 	EndIf
 	If _IsPressed("1B") Then ExitStreaming()
 EndFunc
