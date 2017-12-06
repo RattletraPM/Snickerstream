@@ -1,3 +1,5 @@
+#AutoIt3Wrapper_Res_HiDpi=Y
+
 #cs
   ___      _    _              _
  / __|_ _ (_)__| |_____ _ _ __| |_ _ _ ___ __ _ _ __
@@ -28,7 +30,9 @@ TODO: Add features and other stuff. Code has been polished a bit, but it could b
 #include "include\Direct2D.au3"
 #include "include\GetGitCommit.au3"
 
-;Globbals - Streaming GUI and Drawing
+If Not (@Compiled) Then DllCall("User32.dll","bool","SetProcessDPIAware")	;Set DPI awareness if the script isn't compiled
+
+;Globals - Streaming GUI and Drawing
 Global $g_hGUI, $g_hGfxCtxt, $g_hBitmap, $g_hBMP, $g_hBMP2, $g_hGraphics, $iFPS=0, $iInterpolation=0, $sVersion="git_"&_GetGitCommit("refs/remotes/origin/master")&" ", _
 $sGUITitle="Snickerstream " & $sVersion, $aWinResize, $ix1BMP1=0, $ix2BMP1=0, $ix1BMP2=0, $ix2BMP2=0, $iy1BMP1=0, $iy2BMP1=0, $iy1BMP2=0, $iy2BMP2=0, _
 $iLayoutmode=0, $bNoDisplayIPWarn=0, $bD2D=True
@@ -37,8 +41,8 @@ $iLayoutmode=0, $bNoDisplayIPWarn=0, $bD2D=True
 Global $sIpAddr="0.0.0.0", $iPriorityMode=0, $iPriorityFactor=5, $iImageQuality=70, $iQoS=20
 
 ;Globals - Config
-Global $sFname="settings.ini", $sSectionName="Snickerstream", $aIniSections[16] = ["IpAddr", "PriorityMode", "PriorityFactor", "ImageQuality", _
-"QoS", "Interpolation", "Layoutmode", "PCIpAddr", "NoDisplayIPWarn", "Loglevel", "DontCheckSettings", "UseD2D", "GDIPWarn", "NFCLastAnswer", "WaitRemoteplayInit", "Framelock"], _
+Global $sFname="settings.ini", $sSectionName="Snickerstream", $aIniSections[17] = ["IpAddr", "PriorityMode", "PriorityFactor", "ImageQuality", _
+"QoS", "Interpolation", "Layoutmode", "PCIpAddr", "NoDisplayIPWarn", "Loglevel", "DontCheckSettings", "UseD2D", "GDIPWarn", "NFCLastAnswer", "WaitRemoteplayInit", "Framelock", "ReturnAfterMsec"], _
 $sPCIpAddr=$sIpAddr, $iLogLevel=0, $sLogFname="log.txt"
 
 ;Globals - Misc
@@ -154,7 +158,9 @@ Func StreamingLoop()
 	CheckIfStreaming($iSocket,$sIpAddr)
 
 	Local $iFramelock=IniRead($sFname,$sSectionName,$aIniSections[15],0)
+	Local $iReturnAfter=IniRead($sFname,$sSectionName,$aIniSections[16],8000)
 	Local $iFramelockedFPS=0
+	Local $iTimerWaitExit=TimerInit()
 
     While $bStreaming==True
 		Local $iFrameTimer=TimerInit()
@@ -185,6 +191,7 @@ Func StreamingLoop()
 				While TimerDiff($iFrameTimer)<=$iRemainingTime	;Nothing (it doesn't use the Sleep function because it's limited to a minimum of 10ms, read the function ref)
 				WEnd
 			EndIf
+			$iTimerWaitExit=TimerInit()
 		EndIf
 		If TimerDiff($hTimer)>=1000 Then
 			$hTimer=TimerInit()
@@ -197,10 +204,14 @@ Func StreamingLoop()
 			LogLine("FPS:"&$iFPS,3)
 			$iFPS=0
 		EndIf
+		If $iReturnAfter>0 And TimerDiff($iTimerWaitExit)>=$iReturnAfter Then
+			LogLine("(N)3DS hasn't been sending frames for more than "&$iReturnAfter&"msecs, returning to the connection window.",1)
+			ReturnToConnectionWnd()
+		EndIf
 	WEnd
 EndFunc   ;==>Example
 
-Func DisplayScreenGDIPlus($iScreen, ByRef $bRawJpeg)	;TODO: Ignore top/bottom screens in top only/bottom only mode!
+Func DisplayScreenGDIPlus($iScreen, ByRef $bRawJpeg)
 	$g_hBMP=_GDIPlus_BitmapCreateFromMemory($bRawJpeg)	;Create a GDI+ Bitmap from the image that's stored in memory
 	_GDIPlus_ImageRotateFlip($g_hBMP,3)	;The original image needs to be rotated
 	If $iScreen==1 And $iLayoutmode<>5 Then
@@ -275,6 +286,16 @@ Func _CheckPressedOnce($key)
 	EndIf
 EndFunc
 
+Func ReturnToConnectionWnd()
+	LogLine("Returning to the connection window.",1)
+	$bStreaming=False
+	UDPCloseSocket($iSocket)
+	UDPShutdown()
+	CheckAndShutdownGDIp()
+	GUIDelete($g_hGUI)
+	CreateMainGUIandSettings()
+EndFunc
+
 Func CheckKeys()
 	;Ehh... I guess it's a bit more polished now?
 	If _CheckPressedOnce("26")==True Then
@@ -300,13 +321,7 @@ Func CheckKeys()
 		LogLine("Interpolation mode changed to "&$iInterpolation&".",1)
 	EndIf
 	If _CheckPressedOnce("0D")==True Then
-		LogLine("Returning to the connection window.",1)
-		$bStreaming=False
-		UDPCloseSocket($iSocket)
-		UDPShutdown()
-		CheckAndShutdownGDIp()
-		GUIDelete($g_hGUI)
-		CreateMainGUIandSettings()
+		ReturnToConnectionWnd()
 	EndIf
 	If _CheckPressedOnce("53")==True Then
 		_ScreenCapture_CaptureWnd("screenshot"&@MDAY&@MON&@YEAR&@HOUR&@MIN&@SEC&@MSEC&".bmp",$g_hGUI,0,0,-1,-1,False)
