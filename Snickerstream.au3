@@ -1,5 +1,3 @@
-#AutoIt3Wrapper_Res_HiDpi=Y
-
 #cs
   ___      _    _              _
  / __|_ _ (_)__| |_____ _ _ __| |_ _ _ ___ __ _ _ __
@@ -25,15 +23,14 @@ TODO: Add features and other stuff. Code has been polished a bit, but it could b
 #include <Misc.au3>
 #include <String.au3>
 #include <ScreenCapture.au3>
+#include <WinAPIConv.au3>
 #include "include\ntr.au3"
 #include "include\WIC.au3"
 #include "include\Direct2D.au3"
-#include "include\GetGitCommit.au3"
-
-If Not (@Compiled) Then DllCall("User32.dll","bool","SetProcessDPIAware")	;Set DPI awareness if the script isn't compiled
+#include "include\GitAndGithub.au3"
 
 ;Globals - Streaming GUI and Drawing
-Global $g_hGUI, $g_hGfxCtxt, $g_hBitmap, $g_hBMP, $g_hBMP2, $g_hGraphics, $iFPS=0, $iInterpolation=0, $sVersion="git_"&_GetGitCommit("refs/remotes/origin/master")&" ", _
+Global $g_hGUI, $g_hGfxCtxt, $g_hBitmap, $g_hBMP, $g_hBMP2, $g_hGraphics, $iFPS=0, $iInterpolation=0, $sVersion="v0.90b ", _
 $sGUITitle="Snickerstream " & $sVersion, $aWinResize, $ix1BMP1=0, $ix2BMP1=0, $ix1BMP2=0, $ix2BMP2=0, $iy1BMP1=0, $iy2BMP1=0, $iy1BMP2=0, $iy2BMP2=0, _
 $iLayoutmode=0, $bNoDisplayIPWarn=0, $bD2D=True
 
@@ -41,8 +38,9 @@ $iLayoutmode=0, $bNoDisplayIPWarn=0, $bD2D=True
 Global $sIpAddr="0.0.0.0", $iPriorityMode=0, $iPriorityFactor=5, $iImageQuality=70, $iQoS=20
 
 ;Globals - Config
-Global $sFname="settings.ini", $sSectionName="Snickerstream", $aIniSections[17] = ["IpAddr", "PriorityMode", "PriorityFactor", "ImageQuality", _
-"QoS", "Interpolation", "Layoutmode", "PCIpAddr", "NoDisplayIPWarn", "Loglevel", "DontCheckSettings", "UseD2D", "GDIPWarn", "NFCLastAnswer", "WaitRemoteplayInit", "Framelock", "ReturnAfterMsec"], _
+Global $sFname="settings.ini", $sSectionName="Snickerstream", $aIniSections[20] = ["IpAddr", "PriorityMode", "PriorityFactor", "ImageQuality", _
+"QoS", "Interpolation", "Layoutmode", "PCIpAddr", "NoDisplayIPWarn", "Loglevel", "DontCheckSettings", "UseD2D", "GDIPWarn", "NFCLastAnswer", _
+"WaitRemoteplayInit", "Framelimit", "ReturnAfterMsec", "DontCheckForUpdates", "CustomWidth", "CustomHeight"], _
 $sPCIpAddr=$sIpAddr, $iLogLevel=0, $sLogFname="log.txt"
 
 ;Globals - Misc
@@ -67,6 +65,20 @@ LogLine("You should set your loglevel to something else unless you're troublesho
 LogLine("CPU: "&GetCPU(),3)
 LogLine("GPU: "&GetGPU(),3)
 LogLine("OS: "&@OSVersion,3)
+
+If (IsAdmin()==1 And @Compiled==1) And (StringLeft(@OSVersion,6)<>"WIN_XP" And @OSVersion<>"WIN_2003") Then	;This feature is not supported in Windows XP/XPe/Server 2003
+	LogLine("WARNING: Snickerstream was run as admin and will now allow itself in Windows Firewall.",1)
+	If FileExists(@SystemDir&"\netsh.exe") Then
+		ShellExecute(@SystemDir&'\netsh','advfirewall firewall delete rule name="Snickerstream"',Default,Default,@SW_HIDE)
+		ShellExecute(@SystemDir&'\netsh','advfirewall firewall add rule name="Snickerstream" dir=in action=allow program="'&@ScriptFullPath&'" enable=yes',Default,Default,@SW_HIDE)
+		ShellExecute(@SystemDir&'\netsh','advfirewall firewall add rule name="Snickerstream" dir=out action=allow program="'&@ScriptFullPath&'" enable=yes',Default,Default,@SW_HIDE)
+		LogLine("Done. It's strongly recommended to run Snickerstream as a normal user from now on.",1)
+	Else
+		LogLine("There was an error while adding an exception to Windows Firewall! Please add one manually from the control panel.",1)
+	EndIf
+EndIf
+
+CheckForUpdates()
 
 If $__g_hD2D1DLL==-1 Then
 	MsgBox($MB_ICONERROR,"Direct2D init error","There was an error while initializing Direct2D." & @CRLF & @CRLF & "This error is most likely caused by using Snickerstream on an OS"& _
@@ -128,6 +140,12 @@ Func StreamingLoop()
 			Global $ix1BMP1=0, $ix2BMP1=@DesktopWidth, $iy1BMP1=0, $iy2BMP1=-@DesktopHeight	;Top screen
 			CheckOptimal()
 	EndSwitch
+
+	Local $iCustomWidth=IniRead($sFname,$sSectionName,$aIniSections[18],0)
+	Local $iCustomHeight=IniRead($sFname,$sSectionName,$aIniSections[19],0)
+
+	If $iCustomWidth>=150 Then $iWidth=$iCustomWidth
+	If $iCustomHeight>=200 Then $iHeight=$iCustomHeight
 
 	$g_hGUI = GUICreate($sSectionName&" - Connecting...", $iWidth, $iHeight,$iGUIWidthHeight,$iGUIWidthHeight,$xGUIStyle,$xGUIExStyle) ;Create the GUI
 	GUISetBkColor(0, $g_hGUI)
@@ -324,7 +342,13 @@ Func CheckKeys()
 		ReturnToConnectionWnd()
 	EndIf
 	If _CheckPressedOnce("53")==True Then
-		_ScreenCapture_CaptureWnd("screenshot"&@MDAY&@MON&@YEAR&@HOUR&@MIN&@SEC&@MSEC&".bmp",$g_hGUI,0,0,-1,-1,False)
+		Local $tPoint = DllStructCreate("int X;int Y")
+		DllStructSetData($tPoint, "X", 0)
+		DllStructSetData($tPoint, "Y", 0)
+		_WinAPI_ClientToScreen($g_hGUI, $tPoint)
+		Local $iAbsoluteX=DllStructGetData($tPoint, "X")
+		Local $iAbsoluteY=DllStructGetData($tPoint, "Y")
+		_ScreenCapture_Capture("screenshot"&@MDAY&@MON&@YEAR&@HOUR&@MIN&@SEC&@MSEC&".bmp",$iAbsoluteX,$iAbsoluteY,($iWidth+$iAbsoluteX)-1,($iHeight+$iAbsoluteY)-1,False)
 	EndIf
 	If _IsPressed("1B") Then ExitStreaming()
 EndFunc
@@ -579,7 +603,7 @@ Func LogStart()
 		FileWriteLine($hFile," \__ \ ' \| / _| / / -_) '_(_-<  _| '_/ -_) _` | '  \")
 		FileWriteLine($hFile," |___/_||_|_\__|_\_\___|_| /__/\__|_| \___\__,_|_|_|_|")
 		FileWriteLine($hFile,_StringRepeat("-",82))
-		Switch Random(0,6,1)
+		Switch Random(0,10,1)
 			Case 0
 				FileWriteLine($hFile,"it hac, it bric, but most importantly, it S N I C C")
 			Case 1
@@ -600,6 +624,8 @@ Func LogStart()
 				FileWriteLine($hFile,"[stability intensifies]")
 			Case 9
 				FileWriteLine($hFile,"Yep, it still doesn't have an icon.")
+			Case 10
+				FileWriteLine($hFile,"And no one ate dinner that night.")
 		EndSwitch
 		FileWriteLine($hFile,_StringRepeat("-",82))
 		FileWriteLine($hFile,"VERSION : "&$sVersion)
@@ -620,8 +646,9 @@ Func LogLine($sLogString,$iReqLogLevel)
 EndFunc
 
 Func GetCPU()
-	$objWMIService = ObjGet("winmgmts:\\.\root\CIMV2")
-	$colItems = $objWMIService.ExecQuery("SELECT * FROM Win32_Processor", "WQL", 0x10 + 0x20)
+	Local $objWMIService=ObjGet("winmgmts:\\.\root\CIMV2")
+	Local $colItems=$objWMIService.ExecQuery("SELECT * FROM Win32_Processor", "WQL", 0x10 + 0x20)
+	Local $Output="(Not found)"
 	If IsObj($colItems) then
 	   For $objItem In $colItems
 			$Output = $objItem.Name&"@"&$objItem.MaxClockSpeed&"MHz"
@@ -724,4 +751,28 @@ Func GUI_RenderingChange()
 		GUICtrlSetData($GUI_Interpolation, "|Default|Low quality|High quality|Bilinear|Bicubic|Nearest-neighbor|Bilinear (HQ)|Bicubic (HQ)", "Default")
 	EndIf
 	_GUICtrlComboBox_SetCurSel($GUI_Interpolation,0)
+EndFunc
+
+Func ReturnDecNumber($sNum)
+	Return Number(StringRegExpReplace($sNum, "[^\d\.]", ""))
+EndFunc
+
+Func CheckForUpdates()
+	If StringLeft($sVersion,3)<>"git" And IniRead($sFname,$sSectionName,$aIniSections[17],0)==1 Then
+		Local $sLatestFullVer=_GetGithubLatestReleaseTag("RattletraPM","Snickerstream")
+		Local $sLatestVer=ReturnDecNumber($sLatestFullVer)
+
+		If @error<>-1 And $sLatestVer>ReturnDecNumber($sVersion) Then
+			If Not IsDeclared("iMsgBoxAnswer") Then Local $iMsgBoxAnswer
+			$iMsgBoxAnswer = MsgBox(67,"New stable version available!","A new stable version of Snickerstream is now available for download!" & @CRLF & @CRLF & _
+			"Current version: " & $sVersion & @CRLF & "Latest version: " & $sLatestFullVer & @CRLF & @CRLF & "Do you want to visit Snickerstream's GitHub Releases page?" & @CRLF & @CRLF & _
+			"(Clicking on Cancel will disable Snickerstream's auto update feature by never checking for newer versions ever again)")
+			Select
+				Case $iMsgBoxAnswer = 6 ;Yes
+					ShellExecute ("https://github.com/RattletraPM/Snickerstream/releases")
+				Case $iMsgBoxAnswer = 2 ;Cancel
+					IniWrite($sFname,$sSectionName,$aIniSections[17],1)
+			EndSelect
+		EndIf
+	EndIf
 EndFunc
