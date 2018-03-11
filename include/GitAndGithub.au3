@@ -26,3 +26,24 @@ Func _GetGitCommit($sRef,$iLenght=7,$sPackedRefsPath=".git\packed-refs")
 	FileClose($hFile)
 	Return "NOVERSION"
 EndFunc
+
+; #INDEX# =======================================================================================================================
+; Name...........: _GetGithubLatestReleaseTag
+; Description ...: Gets the latest release tag from a GitHub repo using the official API
+; Syntax.........: _GetGitCommit($sUser, $sRepo)
+; Return values .: Success	-	Latest release tag (as string)
+;					Failure - Returns a blank string and sets @error to 1
+; Remarks .......: None
+; Author(s) .....: RattletraPM
+; Dll ...........: None
+; ===============================================================================================================================
+Func _GetGithubLatestReleaseTag($sUser,$sRepo)
+	Local $sAPIRead=BinaryToString(InetRead("https://api.github.com/repos/"&$sUser&"/"&$sRepo&"/releases/latest",1))
+	Local Const $sTag=',"tag_name":'
+	If StringInStr($sAPIRead,$sTag)<>0 Then
+		Return StringTrimLeft(StringLeft($sAPIRead,StringInStr($sAPIRead,',"target_commitish":')-2),StringInStr($sAPIRead,$sTag)+12)
+	Else
+		SetError(-1)
+		Return ""
+	EndIf
+EndFunc
