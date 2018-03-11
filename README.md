@@ -12,7 +12,7 @@ Here are some of the improvements of Snickerstream over NTRViewer that are alrea
 - Two rendering libraries are supported: Direct2D (hardware accelerated if available) and GDI+ (software only)
 - Way less resource usage under Direct2D
 - Better netcode, it will automatically try to recover any lost frames if needed
-- No DLL files needed, as it uses the Windows API to draw the GUI and GDI+ to draw the screens (keep in mind that kit-kat still uses DLLs, they just get extracted to a temporary directory)
+- No DLL files needed, as it uses the Windows API to draw the GUI and Direct2D/GDI+ to draw the screens (keep in mind that kit-kat still uses DLLs, they just get extracted to a temporary directory)
 - Native x64 version for better performance on x64 computers
 - MANY more screen layouts, such borderless fullscreen and inverted layouts
 - More options that will make Snickerstream work better on crappy computers or networks
@@ -20,7 +20,10 @@ Here are some of the improvements of Snickerstream over NTRViewer that are alrea
 - Built-in screenshot function (press S while streaming to create a screenshot)
 - Built in NFC patching
 - 7 different remoteplay presets are available
-- Amutomatic remoteplay init, so you only need to click connect and Snickerstream will care about everything else
+- Automatic remoteplay init, so you only need to click connect and Snickerstream will care about everything else
+- Auto-disconnects if the 3DS has stopped streaming (was shutdown/rebooted/etc, can be customized or disabled)
+- Has a built-in frame limiter (disabled by default) if you wish to have a smoother stream
+- It  will try allow itself through Windows Firewall if ran as admin
 
 And here are some of the planned features:
 - Command line arguments
@@ -31,25 +34,19 @@ And here are some of the planned features:
 
 This quick tutorial on how to use Snickerstream 0.85b gives for granted that you have installed NTR CFW on your New 3DS and you know how to get it up and running.
 
-- Open NTR CFW. I strongly suggest you to use BootNTR, but anything that works for you is going to be fine too.
-
-- Make sure that you're connected to your Wi-Fi network and find your 3DS's local IP address. There are a few ways to do this, for example:
-
+* Open NTR CFW. I strongly suggest you to use BootNTR, but anything that works for you is going to be fine too.
+* Make sure that you're connected to your Wi-Fi network and find your 3DS's local IP address. There are a few ways to do this, for example:
 * Open FTPD and look at the top screen (you don't need the port, aka the number after
 the ":")
 * Use FBI (go to Remote Install -> Recieve URLs over the network)
-* Set a static IP address
-
-- Click on connect!
+* Click on connect!
 
 Keep in mind that some games (such as Pokémon XY/ORAS/SUMO) require a NFC patch to be streamed via NTR. In order to stream these games make sure that your 3DS is connnected to the Wi-Fi network, click the "Send NFC patch" button and choose your firmware version. The NFC patch should work even if the game isn't running yet (as long as the 3DS didn't reboot/soft reset) but in case it doesn't, reach an area of the game that initializes the NFC routine (for example, after loading your savegame in the Pokémon games), press the home button, wait until your 3DS reconnects and then send the NFC patch again.
 
 ## Troubleshooting
 
-* If you get a grey screen double check that Remoteplay has been started on your 3DS. Also double check that your 3DS's IP address is correct and that you've allowed Snickerstream in Windows Firewall (or any firewall you may be using).
-
+* If you get a grey/black screen double check that Remoteplay has been started on your 3DS. Also double check that your 3DS's IP address is correct and that you've allowed Snickerstream in Windows Firewall (or any firewall you may be using).
 * If you get poor streaming performance try lowering the streaming quality or increasing the QoS value.
-
 * If your antivirus detects it as a virus, be calm, it's a false positive. There's a reason I made this tool open source and you can check by yourself that it isn't doing anything nasty on your system (also, some crappy AVs see anything made with AutoIt as malicious. If yours is doing that, then change your own to something that isn't Protegent-level, pretty please =/ )
 
 ## Keyboard shortcuts
