@@ -111,7 +111,7 @@ Func _NTRRemoteplayReadJPEG($iSocket)
 	Local $sFullJPEGBuf, $dRecv, $iCurId, $iCurScreen, $iExpectedPacket=0
 
 	Local $aRetArr[2]
-	$dRecv=UDPRecv($iSocket,2000,1)
+	$dRecv=UDPRecv($iSocket,1448,1)
 	If @error Then
 		LogLine("UDPRecv error, @error="&@error&".",3)
         Return -1
@@ -188,10 +188,10 @@ Func _NTRRemoteplayReadPacketHeader($dPacket)
 	;0x00: Frame ID
 	;0x01: First Nibble:if set to 1, it means that the packet is the last one in a JPEG stream.Second Nibble:Screen, 1=Top/0=Bottom
 	;0x02: Image format, usually this is set to 2
-	;0x04: Packet number in JPEG stream
+	;0x03: Packet number in JPEG stream
 	;
 	;== BODY ==
-	;0x05 to 0x0n: JPEG data
+	;0x04 to 0x0n: JPEG data
 	;
 	;Now, it would make sense to send information about the format that's being used to the viewer application, but we really don't
 	;care if we use AutoIt - and that's because every format used by NTR should be supported by GDI+ out of the box. So, it's
