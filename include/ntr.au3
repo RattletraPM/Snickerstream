@@ -1,3 +1,4 @@
+#include <FileConstants.au3>
 #include-once
 
 ; #INDEX# =======================================================================================================================
@@ -235,4 +236,37 @@ Func _NTRSendNFCPatch($sIp,$sAddr)
 	TCPCloseSocket($iSocket)					;NTR expect us to disconnect
 	TCPShutdown()
 	Return 1
+EndFunc
+
+; #FUNCTION# ====================================================================================================================
+; Name...........: 	_NTRCheckPortBug
+; Author ........: 	RattletraPM
+; ===============================================================================================================================
+Func _NTRCheckPortBug($iPort)
+	If Mod($iPort-1,255)<>0 Then
+		Return False
+	Else
+		MsgBox(16,"Error","This port cannot be assigned due to a bug in NTR."&@CRLF&"Please choose another port.")
+		Return True
+	EndIf
+EndFunc
+
+; #FUNCTION# ====================================================================================================================
+; Name...........: 	_NTRPatchPort
+; Author ........: 	RattletraPM
+; ===============================================================================================================================
+Func _NTRPatchPort($sNTRPath,$iPort)
+	Local $sHexPort=Hex($iPort-1,4)
+	Local $hFOpen=FileOpen($sNTRPath,$FO_BINARY+$FO_APPEND)
+
+	FileSetPos($hFOpen,168936,0)
+	Local $iWriteReturn=FileWrite($hFOpen,String("0x"&$sHexPort))
+	FileClose($hFOpen)
+	If $iWriteReturn==1 Then
+		MsgBox(64,"Success!"&$sHexPort,"NTR binary patched succesfully!")
+		Return 1
+	Else
+		MsgBox(16,"Error","Couldn't patch the NTR binary (the file could not be written to).")
+		Return -1
+	EndIf
 EndFunc
