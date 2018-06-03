@@ -15,24 +15,26 @@ Here are some of the improvements of Snickerstream over NTRViewer that are alrea
 - No DLL files needed, as it uses the Windows API to draw the GUI and Direct2D/GDI+ to draw the screens (keep in mind that kit-kat still uses DLLs, they just get extracted to a temporary directory)
 - Native x64 version for better performance on x64 computers
 - MANY more screen layouts, such borderless fullscreen and inverted layouts
+- Pop-up secondary screen for fullscreen layouts
 - More options that will make Snickerstream work better on crappy computers or networks
 - Better default settings that will make streaming smoother on most networks
 - Built-in screenshot function (press S while streaming to create a screenshot)
 - Built in NFC patching
-- 7 different remoteplay presets are available
+- 7 different remoteplay presets are available, with support for creating customized ones
 - Automatic remoteplay init, so you only need to click connect and Snickerstream will care about everything else
 - Auto-disconnects if the 3DS has stopped streaming (was shutdown/rebooted/etc, can be customized or disabled)
 - Has a built-in frame limiter (disabled by default) if you wish to have a smoother stream
 - It  will try allow itself through Windows Firewall if ran as admin
+- Toggable automatic screen centering for all layouts
+- Customizable hotkeys
+- Support for multiple NTR streaming to the same PC via NTR Patching
 
 And here are some of the planned features:
-- Command line arguments
-- Some user-requested features
-- (Maybe) AVI recording function directly in the client
+- None, at the moment. Submit your own ideas!
 
 ## Quick tutorial
 
-This quick tutorial on how to use Snickerstream 0.85b gives for granted that you have installed NTR CFW on your New 3DS and you know how to get it up and running.
+This quick tutorial on how to use Snickerstream v1.00 gives for granted that you have installed NTR CFW on your New 3DS and you know how to get it up and running.
 
 * Open NTR CFW. I strongly suggest you to use BootNTR, but anything that works for you is going to be fine too.
 * Make sure that you're connected to your Wi-Fi network and find your 3DS's local IP address. There are a few ways to do this, for example:
@@ -61,8 +63,10 @@ S: Take a screenshot
 
 ENTER: Go back to the connection window
 
+SPACEBAR: Pop up the other screen (can only be done in fullscreen modes)
+
 ## How to compile
-You need AutoIt v3.3.14.2 or later to compile Snickerstream.
+You need AutoIt v3.3.14.4 or later to compile Snickerstream.
 
 After you've downloaded and installed AutoIt, clone this repo to your hard drive and use Aut2Exe to compile Snickerstream.au3 to an EXE file or open it in SciTE to run the script without compiling.
 
