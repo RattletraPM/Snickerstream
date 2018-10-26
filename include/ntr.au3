@@ -2,9 +2,9 @@
 #include-once
 
 ; #INDEX# =======================================================================================================================
-; Title .........: 	NTR UDF for AutoIT v3 (UDF Version 0.7b)
+; Title .........: 	NTR UDF for AutoIT v3 (UDF Version 1.0)
 ; AutoIt Version : 	3.3.14.2
-; Description ...: 	This UDF has been discontinued. Read more: https://github.com/RattletraPM/Snickerstream/tree/master/include
+; Description ...: 	This UDF is meant to be used by Snickerstream. It might need editing in order to be used by other scripts.
 ;
 ;					Snickerstream and all of its components are released under the GPLv2 License:
 ;					https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
@@ -117,10 +117,10 @@ Func _NTRRemoteplayReadJPEG($iSocket)
 		LogLine("UDPRecv error, @error="&@error&".",3)
         Return -1
     Else
-		$aHeader=_NTRRemoteplayReadPacketHeader(BinaryMid($dRecv,1,4))	;First, we need to read the packet's header
+		Local $aHeader=_NTRRemoteplayReadPacketHeader(BinaryMid($dRecv,1,4))	;First, we need to read the packet's header
 		;We return an error if the previous function failed, if the packet number is NOT zero, or if the packet's screen ID is different than $iScreen
 		If IsArray($aHeader)==0 Or $aHeader[2]<>0 Then
-			LogLine("Invalid or incomplete packet recieved, skipping. This is OK if you've just started Snickerstream.",2)
+			LogLine("Invalid or incomplete packet recieved.",2)
 			Return -1
 		EndIf
 		$iCurId=$aHeader[0]
@@ -136,14 +136,14 @@ Func _NTRRemoteplayReadJPEG($iSocket)
 			;packet number and the actual packet number, it means that we've dropped some packets and we cannot assemble a valid
 			;image. Return an error.
 			If IsArray($aHeader)==0 Or $iExpectedPacket<>$aHeader[2] Or $iCurScreen<>StringRight(Hex($aHeader[1],2),1) Then
-				LogLine("Some packets have been dropped! Skipping current frame. (Check your connection!)",2)
+				LogLine("Skipping current frame. (packets dropped)",2)
 				Return -1
 			EndIf
 		Until $aHeader[0]<>$iCurId
 	EndIf
 
 	If StringRight($sFullJPEGBuf,4)<>"FFD9" Then ;If the JPEG doesn't end with the HEX bytes FFD9 it means that's incomplete
-		LogLine("Current frame is not a valid JPEG image, skipping. (You might be dropping packets, check your connection!)",2)
+		LogLine("Skipping current frame. (Invalid/incomplete JPEG image)",2)
 		Return -1
 	EndIf
 

@@ -17,7 +17,7 @@ Func _GetGitCommit($sRef,$iLenght=7,$sPackedRefsPath=".git\packed-refs")
 	Local $hFile=FileOpen($sPackedRefsPath, 0)
 
 	For $i=1 to _FileCountLines($sPackedRefsPath)
-		$sLine = FileReadLine($hFile, $i)
+		Local $sLine = FileReadLine($hFile, $i)
 		If StringInStr($sLine,$sRef)<>0 Then
 			FileClose($hFile)
 			Return StringLeft($sLine, $iLenght)
