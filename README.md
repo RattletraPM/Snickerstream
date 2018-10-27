@@ -1,55 +1,45 @@
 # Snickerstream
 
-Snickerstream is a completely new streaming client for NTR CFW. It aims to become a complete NTRViewer replacement with lots of extra features, including stuff such as better netcode, more screen layouts and less RAM usage. This is different than kit-kat/NitroStream as the formers still uses NTRViewer as its internal streaming client while Snickerstream has been completely written from scratch, making it the first real NTR streaming client alternative (also, if you've tried UWPStreamer or cuteNTR then you can say you've already tried Snickerstream in a way, as they used or have previously used part of its code internally!)
+Snickerstream is a streaming client for Nintendo 3DS consoles. It's the first and currently only one that supports both NTR and HzMod (the two available homebrew apps for streaming) and that can also receive streams from multiple 3DS consoles to the same PC using NTR. Unlike other clients Snickerstream has been rewritten completely from scratch, allowing it to offer a ton more features with an extremely small resource footprint. Plus, most of said features are shared with both streaming apps so you can use whichever one you want while retaining all your settings!
 
-Now, I hear you ask, why reinvent the wheel? Why make this if there's already something that does a very similiar thing?
+(NOTE: As of version 1.10 HzMod support is still experimental and partially incomplete and only its latest version is supported. However game compatibility is almost flawless, only very few titles cannot be streamed using Snickerstream but can be using HorizonScreen. All of this will be gradually fixed with each newer version!)
 
-The reason is simple: I wanted to add some functions to NTRViewer, but some of the stuff I had in mind simply wouldn't be possible without altering its source code, and considering that NTRViewer wasn't properly updated in a while I took the opportunity of making this complete rewrite.
+Snickerstream's three main focuses are performance, customizability and feature-richness. If all you want to do is to set up a simple 3DS streaming environment then your usual NTR & HzMod settings are all there, or if you don't want to touch them at all you can even choose one of the built-in presets. However, if you're someone who wants to tweak every single variable and setting to get everything up and running just the way you want it to be, you'll definitely feel just at home in the advanced menu... or in the settings INI, if that's more your thing.
 
-Here are some of the improvements of Snickerstream over NTRViewer that are already implemented:
+Don't believe me? Here are some examples of features you can expect:
 - Real time screen scaling
-- Pixel interpolation, which improves the image quality if the window has been scaled
-- Two rendering libraries are supported: Direct2D (hardware accelerated if available) and GDI+ (software only)
-- Way less resource usage under Direct2D
-- Better netcode, it will automatically try to recover any lost frames if needed
-- No DLL files needed, as it uses the Windows API to draw the GUI and Direct2D/GDI+ to draw the screens (keep in mind that kit-kat still uses DLLs, they just get extracted to a temporary directory)
-- Native x64 version for better performance on x64 computers
-- MANY more screen layouts, such borderless fullscreen and inverted layouts
-- Pop-up secondary screen for fullscreen layouts
+- Sevaral interpolation modes (improves the image quality especially if the window has been scaled)
+- Portable: no DLL files needed (keep in mind that kit-kat still uses DLLs, they just get extracted to a temporary directory)
+- Native x64 version for better performance on 64-bit computers
+- MANY screen layouts, such borderless fullscreen and separate windows for both screens
+- Pop-up secondary screen for fullscreen layouts (press SPACEBAR)
 - More options that will make Snickerstream work better on crappy computers or networks
-- Better default settings that will make streaming smoother on most networks
 - Built-in screenshot function (press S while streaming to create a screenshot)
 - Built in NFC patching
-- 7 different remoteplay presets are available, with support for creating customized ones
-- Automatic remoteplay init, so you only need to click connect and Snickerstream will care about everything else
+- 7 different built-in remoteplay presets are available, with support for creating your own customized ones
+- Automatic remoteplay init, you only need to click connect and Snickerstream will care about everything else
 - Auto-disconnects if the 3DS has stopped streaming (was shutdown/rebooted/etc, can be customized or disabled)
-- Has a built-in frame limiter (disabled by default) if you wish to have a smoother stream
-- It  will try allow itself through Windows Firewall if ran as admin
+- Built-in frame limiter (disabled by default) if you wish to have a smoother stream
+- It will try allow itself through Windows Firewall if ran as admin
 - Toggable automatic screen centering for all layouts
 - Customizable hotkeys
 - Support for multiple NTR streaming to the same PC via NTR Patching
 
-And here are some of the planned features:
-- None, at the moment. Submit your own ideas!
+And that's not even counting HzMod support, which offers several features that NTR does not have!
+- Supports both New and Old 3DS models
+- It can stream multiple consoles to the same PC out of the box, without the need to change the ports or patching the executable
+- You can change the stream's quality in real time (unlike NTR, which needs you to reboot your console in order to do that)
+- It doesn't crash when soft-resetting or when you exit out of a game (shiny hunters, rejoice!)
+- It works in a much cleaner and *stable* manner
+- Better game compatibility (games that must be streamed using TARGA are currently not supported but this is caused by incomplete support in Snickerstream, not HzMod itself)
+- Last but not least, it's still in development!
+- The main downside is that HzMod is a bit slower when compared to NTR, but don't let that scare you off! It's usually not too big of a difference (especially if you take into account that many games run at 30FPS on the 3DS anyways) so all things considered you should definitely give HzMod a chance, especially if NTR crashes a lot or just doesn't work for you.
 
-## Quick tutorial
+HzMod was made by @Sono who also helped me to add support for it in Snickerstream (thanks a lot again!) so if you enjoy it, that's who you should thank! =P
 
-This quick tutorial on how to use Snickerstream v1.00 gives for granted that you have installed NTR CFW on your New 3DS and you know how to get it up and running.
+## Quick tutorial, Troubleshooting & FAQ
 
-* Open NTR CFW. I strongly suggest you to use BootNTR, but anything that works for you is going to be fine too.
-* Make sure that you're connected to your Wi-Fi network and find your 3DS's local IP address. There are a few ways to do this, for example:
-* Open FTPD and look at the top screen (you don't need the port, aka the number after
-the ":")
-* Use FBI (go to Remote Install -> Recieve URLs over the network)
-* Click on connect!
-
-Keep in mind that some games (such as Pokémon XY/ORAS/SUMO) require a NFC patch to be streamed via NTR. In order to stream these games make sure that your 3DS is connnected to the Wi-Fi network, click the "Send NFC patch" button and choose your firmware version. The NFC patch should work even if the game isn't running yet (as long as the 3DS didn't reboot/soft reset) but in case it doesn't, reach an area of the game that initializes the NFC routine (for example, after loading your savegame in the Pokémon games), press the home button, wait until your 3DS reconnects and then send the NFC patch again.
-
-## Troubleshooting
-
-* If you get a grey/black screen double check that Remoteplay has been started on your 3DS. Also double check that your 3DS's IP address is correct and that you've allowed Snickerstream in Windows Firewall (or any firewall you may be using).
-* If you get poor streaming performance try lowering the streaming quality or increasing the QoS value.
-* If your antivirus detects it as a virus, be calm, it's a false positive. There's a reason I made this tool open source and you can check by yourself that it isn't doing anything nasty on your system (also, some crappy AVs see anything made with AutoIt as malicious. If yours is doing that, then change your own to something that isn't Protegent-level, pretty please =/ )
+You can find tutorials, troubleshooting instructions & FAQ on Snickerstream's GitHub wiki!
 
 ## Keyboard shortcuts
 
@@ -65,18 +55,17 @@ ENTER: Go back to the connection window
 
 SPACEBAR: Pop up the other screen (can only be done in fullscreen modes)
 
+S/D: Increase/Decrease streaming quality (HzMod only)
+
 ## How to compile
 You need AutoIt v3.3.14.4 or later to compile Snickerstream.
 
 After you've downloaded and installed AutoIt, clone this repo to your hard drive and use Aut2Exe to compile Snickerstream.au3 to an EXE file or open it in SciTE to run the script without compiling.
 
-## F.A.Q.
-You can see the F.A.Q. here: https://github.com/RattletraPM/Snickerstream/blob/master/FAQ.md
-(It's a pretty long list, so that's why I'm not writing here directly)
-
 ## Credits
 Written by RattletraPM in AutoIt v3. Tested by Roman Sgarz and Silly Chip.
 Snickerstream uses the Direct2D and WIC UDFs written by trancexx and Eukalyptus.
+HzMod made by Sono, who also helped with adding HzMod support to Snickerstream.
 Donations aren't a necessity but they're highly appreciated! :D
 (Donations can be sent via
 * PayPal - lucapm@live.it
