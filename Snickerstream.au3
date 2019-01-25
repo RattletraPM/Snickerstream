@@ -68,7 +68,7 @@ AutoItSetOption("TrayAutoPause", 0)
 AutoItSetOption("GUIOnEventMode", 1) ;Use OnEvent mode - a script like this would be awful without it
 AutoItSetOption("TCPTimeout", 5000)
 AutoItSetOption("TrayAutoPause", 0)
-FileInstall("snickerstream.ico",$sIconPath,1)
+FileInstall("res\snickerstream.ico",$sIconPath,1)
 
 If $CmdLine[0] == 1 Then	;Custom settings.ini path
 	$sFname = $CmdLine[1]
