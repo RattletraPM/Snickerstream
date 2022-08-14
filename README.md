@@ -1,5 +1,6 @@
 # Snickerstream-ES
 
+*¡Bienvenido al repositorio de Snickerstream-ES!*
 ![Snickerstream-ES](https://raw.githubusercontent.com/JustSofter/Snickerstream-ES/master/res/snickerstream-esp.png)
 
 Snickerstream-ES es un cliente de streaming para consolas Nintendo 3DS. Es el primero y actualmente el único que admite tanto NTR como HzMod (las dos aplicaciones disponibles para transmisión) y que también puede recibir transmisiones desde múltiples consolas 3DS a la misma PC usando NTR CFW. A diferencia de otros clientes, Snickerstream se ha reescrito completamente desde cero, lo que le permite ofrecer muchas más funciones con una huella de recursos extremadamente pequeña. Además, la mayoría de dichas funciones se comparten con ambas aplicaciones de transmisión, por lo que puede usar la que desee mientras conserva todas sus configuraciones.
