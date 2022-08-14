@@ -61,6 +61,11 @@ Necesita AutoIt v3.3.14.4 o posterior para compilar Snickerstream.-ES
 Después de descargar e instalar AutoIt, clone este repositorio en su disco duro y use Aut2Exe para compilar Snickerstream.au3 en un archivo EXE o ábralo en SciTE para ejecutar el script sin compilar.
 
 ## Créditos
+
 Escrito por RattletraPM en AutoIt v3. Probado por Roman Sgarz y Silly Chip.
+
 Snickerstream utiliza Direct2D y WIC UDF escritos por trancexx y Eukalyptus.
+
 HzMod creado por Sono, quien también ayudó a agregar compatibilidad con HzMod a Snickerstream.
+
+Traducción hecha por [JustSofter](https://github.com/JustSofter) y [Robichani6-1](https://github.com/Robichani6-1). ¡Gracias por utilizar Snickerstream y por leer!
