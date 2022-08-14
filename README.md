@@ -1,73 +1,65 @@
-# Snickerstream
+# Snickerstream-ES
 
-Snickerstream is a streaming client for Nintendo 3DS consoles. It's the first and currently only one that supports both NTR and HzMod (the two available homebrew apps for streaming) and that can also receive streams from multiple 3DS consoles to the same PC using NTR. Unlike other clients Snickerstream has been rewritten completely from scratch, allowing it to offer a ton more features with an extremely small resource footprint. Plus, most of said features are shared with both streaming apps so you can use whichever one you want while retaining all your settings!
+![Snickerstream-ES](https://raw.githubusercontent.com/JustSofter/Snickerstream-ES/master/res/snickerstream-esp.png)
 
-(NOTE: As of version 1.10 HzMod support is still experimental and partially incomplete and only its latest version is supported. However game compatibility is almost flawless, only very few titles cannot be streamed using Snickerstream but can be using HorizonScreen. All of this will be gradually fixed with each newer version!)
+Snickerstream-ES es un cliente de streaming para consolas Nintendo 3DS. Es el primero y actualmente el único que admite tanto NTR como HzMod (las dos aplicaciones disponibles para transmisión) y que también puede recibir transmisiones desde múltiples consolas 3DS a la misma PC usando NTR CFW. A diferencia de otros clientes, Snickerstream se ha reescrito completamente desde cero, lo que le permite ofrecer muchas más funciones con una huella de recursos extremadamente pequeña. Además, la mayoría de dichas funciones se comparten con ambas aplicaciones de transmisión, por lo que puede usar la que desee mientras conserva todas sus configuraciones.
 
-Snickerstream's three main focuses are performance, customizability and feature-richness. If all you want to do is to set up a simple 3DS streaming environment then your usual NTR & HzMod settings are all there, or if you don't want to touch them at all you can even choose one of the built-in presets. However, if you're someone who wants to tweak every single variable and setting to get everything up and running just the way you want it to be, you'll definitely feel just at home in the advanced menu... or in the settings INI, if that's more your thing.
+(NOTA: a partir de la versión 1.10, la compatibilidad con HzMod aún es experimental y está parcialmente incompleta, y solo se admite su última versión. Sin embargo, la compatibilidad con los juegos es casi perfecta, solo unos pocos títulos no se pueden transmitir con Snickerstream-ES pero sí con HorizonScreen. Todo esto será arreglado gradualmente con cada nueva versión!)
 
-Don't believe me? Here are some examples of features you can expect:
-- Real time screen scaling
-- Sevaral interpolation modes (improves the image quality especially if the window has been scaled)
-- Portable: no DLL files needed (keep in mind that kit-kat still uses DLLs, they just get extracted to a temporary directory)
-- Native x64 version for better performance on 64-bit computers
-- MANY screen layouts, such borderless fullscreen and separate windows for both screens
-- Pop-up secondary screen for fullscreen layouts (press SPACEBAR)
-- More options that will make Snickerstream work better on crappy computers or networks
-- Built-in screenshot function (press S while streaming to create a screenshot)
-- Built in NFC patching
-- 7 different built-in remoteplay presets are available, with support for creating your own customized ones
-- Automatic remoteplay init, you only need to click connect and Snickerstream will care about everything else
-- Auto-disconnects if the 3DS has stopped streaming (was shutdown/rebooted/etc, can be customized or disabled)
-- Built-in frame limiter (disabled by default) if you wish to have a smoother stream
-- It will try allow itself through Windows Firewall if ran as admin
-- Toggable automatic screen centering for all layouts
-- Customizable hotkeys
-- Support for multiple NTR streaming to the same PC via NTR Patching
+Los tres enfoques principales de Snickerstream son el rendimiento, la personalización y la riqueza de funciones. Si todo lo que quiere hacer es configurar un entorno de transmisión 3DS simple, entonces sus configuraciones habituales de NTR y HzMod están todas ahí, o si no quiere tocarlas en absoluto, incluso puede elegir uno de los ajustes preestablecidos incorporados. Sin embargo, si usted es alguien que quiere modificar cada variable y configuración para que todo funcione de la manera que desea, definitivamente se sentirá como en casa en el menú avanzado... o en la configuración. INI, si eso es más lo tuyo.
 
-And that's not even counting HzMod support, which offers several features that NTR does not have!
-- Supports both New and Old 3DS models
-- It can stream multiple consoles to the same PC out of the box, without the need to change the ports or patching the executable
-- You can change the stream's quality in real time (unlike NTR, which needs you to reboot your console in order to do that)
-- It doesn't crash when soft-resetting or when you exit out of a game (shiny hunters, rejoice!)
-- It works in a much cleaner and *stable* manner
-- Better game compatibility (games that must be streamed using TARGA are currently not supported but this is caused by incomplete support in Snickerstream, not HzMod itself)
-- Last but not least, it's still in development!
-- The main downside is that HzMod is a bit slower when compared to NTR, but don't let that scare you off! It's usually not too big of a difference (especially if you take into account that many games run at 30FPS on the 3DS anyways) so all things considered you should definitely give HzMod a chance, especially if NTR crashes a lot or just doesn't work for you.
+¿No me crees? Estos son algunos ejemplos de características que puede esperar:
+- Escalado de pantalla en tiempo real
+- Varios modos de interpolación (mejora la calidad de la imagen especialmente si se ha escalado la ventana)
+- Portable: no se necesitan archivos DLL (tenga en cuenta que kit-kat todavía usa archivos DLL, solo se extraen a un directorio temporal)
+- Versión nativa x64 para un mejor rendimiento en equipos de 64 bits
+- MUCHOS diseños de pantalla, como pantalla completa sin bordes y ventanas separadas para ambas pantallas
+- Pop-up para posiciones de pantalla completa (presione la BARRA ESPACIADORA)
+- Más opciones que harán que Snickerstream-ES funcione mejor en computadoras o redes deficientes
+- Función de captura de pantalla incorporada (presione S mientras transmite para crear una captura de pantalla)
+- Parcheado NFC incorporado
+- Hay 7 disponibles preajustes de stream diferentes, con soporte para crear los tuyos propios personalizados
+- Inicio automático de reproducción remota, solo necesita hacer clic en conectar y Snickerstream-ES se encargará de todo lo demás
+- Se desconecta automáticamente si el 3DS ha dejado de transmitir (se apagó/reinició/etc., se puede personalizar o deshabilitar)
+- Limitador de frames incorporado (deshabilitado de forma predeterminada) si desea tener una transmisión más fluida
+- Intentará permitirse a sí mismo a través del Firewall de Windows si se ejecuta como administrador
+- Centrado de pantalla automático conmutable para todos los diseños
+- Teclas de acceso directo personalizables
+- Soporte para múltiples transmisiones NTR a la misma PC a través de NTR Patching
 
-HzMod was made by @Sono who also helped me to add support for it in Snickerstream (thanks a lot again!) so if you enjoy it, that's who you should thank! =P
+¡Y eso sin contar la compatibilidad con HzMod, que ofrece varias características que NTR no tiene!
+- Admite modelos 3DS nuevos y antiguos
+- Puede transmitir varias consolas a la misma PC desde el primer momento, sin necesidad de cambiar los puertos o parchear el ejecutable
+- Puede cambiar la calidad de la transmisión en tiempo real (a diferencia de NTR, que necesita que reinicie su consola para hacerlo)
+- No se bloquea cuando se reinicia suavemente o cuando sales de un juego (cazadores brillantes, ¡regocíjate!)
+- Funciona de una manera mucho más limpia y *estable*
+- Mejor compatibilidad de juegos (los juegos que deben transmitirse mediante TARGA actualmente no son compatibles, pero esto se debe a una compatibilidad incompleta en Snickerstream, no en HzMod en sí)
+- Por último, pero no menos importante, ¡todavía está en desarrollo!
+- El principal inconveniente es que HzMod es un poco más lento en comparación con NTR, ¡pero no dejes que eso te asuste! Por lo general, no es una diferencia demasiado grande (especialmente si tiene en cuenta que muchos juegos se ejecutan a 30FPS en 3DS de todos modos), por lo que, considerando todas las cosas, definitivamente debería darle una oportunidad a HzMod, especialmente si NTR falla mucho o simplemente no funciona. para ti.
 
-## Quick tutorial, Troubleshooting & FAQ
+HzMod fue creado por @Sono, quien también me ayudó a agregar soporte para él en Snickerstream (¡muchas gracias de nuevo!), así que si lo disfrutas, ¡es a quien debes agradecer! =P
 
-You can find tutorials, troubleshooting instructions & FAQ on Snickerstream's GitHub wiki!
+## Atajos de teclado
 
-## Keyboard shortcuts
+ESC: Cerrar Snickerstream-ES. También puede cerrar el programa haciendo clic derecho en el icono de la bandeja y seleccionando "Salir".
 
-ESC: Close Snickerstream. You can also close the program by right-clicking on the tray icon and selecting "Exit".
+FLECHAS ARRIBA/ABAJO: Aumentar/Disminuir la escala
 
-UP/DOWN ARROWS: Increase/Decrease scaling
+FLECHAS IZQUIERDA/DERECHA: cambiar la configuración de interpolación
 
-LEFT/RIGHT ARROWS: Change interpolation settings
+S: toma una captura de pantalla
 
-S: Take a screenshot
+ENTER: Volver a la ventana de conexión
 
-ENTER: Go back to the connection window
+BARRA ESPACIADORA: muestra la otra pantalla (solo se puede hacer en los modos de pantalla completa)
+S/D: aumentar/disminuir la calidad de transmisión (solo HzMod)
 
-SPACEBAR: Pop up the other screen (can only be done in fullscreen modes)
+## Como compilar
+Necesita AutoIt v3.3.14.4 o posterior para compilar Snickerstream.-ES
 
-S/D: Increase/Decrease streaming quality (HzMod only)
+Después de descargar e instalar AutoIt, clone este repositorio en su disco duro y use Aut2Exe para compilar Snickerstream.au3 en un archivo EXE o ábralo en SciTE para ejecutar el script sin compilar.
 
-## How to compile
-You need AutoIt v3.3.14.4 or later to compile Snickerstream.
-
-After you've downloaded and installed AutoIt, clone this repo to your hard drive and use Aut2Exe to compile Snickerstream.au3 to an EXE file or open it in SciTE to run the script without compiling.
-
-## Credits
-Written by RattletraPM in AutoIt v3. Tested by Roman Sgarz and Silly Chip.
-Snickerstream uses the Direct2D and WIC UDFs written by trancexx and Eukalyptus.
-HzMod made by Sono, who also helped with adding HzMod support to Snickerstream.
-Donations aren't a necessity but they're highly appreciated! :D
-(Donations can be sent via
-* PayPal - lucapm@live.it
-* Bitcoin - 1MwsNoWiu2rHJbTNKWWhc25YpkZvmsFixN
-* Monero - 439udJyDcr8hXrzjswx9pVEcefbph6osNU7mLAMpoabYZn77Bh9GtYBTNnVcjzvEHvdp9eTv7N8dmHUr6tyS5LXVLjaTEPp
+## Créditos
+Escrito por RattletraPM en AutoIt v3. Probado por Roman Sgarz y Silly Chip.
+Snickerstream utiliza Direct2D y WIC UDF escritos por trancexx y Eukalyptus.
+HzMod creado por Sono, quien también ayudó a agregar compatibilidad con HzMod a Snickerstream.
